@@ -43,22 +43,54 @@ In Bagdanov et al. [2] method special frame areas are selected to be maintained 
 
 Recently,  it was also considered that image degradations affected networks trained for face recognition, lowering their accuracy (Karahan et al., 2016). H.264 compression also degrades image quality.
 
- for video encoding, which is a lossy compression technique. H.264 exploits spatial redundancy within images and temporal redundancy in videos to achieve appealing compression ratios, making it a widely accepted standard for video transmission for a myriad of ap- plications. A video consists of images; an image is divided into slices and blocks. A block is a square part (16×16, 8×8 and 4×4) of the images. H.264 is a block based coder/decoder, meaning that a se- ries of mathematical functions are applied on indivi- dual blocks to achieve compression and decompres- sion (Juurlink et al., 2012). We study the effect of this degradation in quality on object detection algorithms.
-
-
-
-
-
-
-
-
-The \textit{Biot-Savart Law} is useful in ... [2].
-
-A \textcolor{blue}{Helmholtz coil} is a device for ... and was named after ... These coils were widely used in ... to produce \underline{uniform magnetic fields} ...
-
-
+H.264 is a lossy compression technique, which exploits spatial redundancy within images and temporal redundancy in videos to achieve appealing compression ratios. Each image in the video is divided into luma macroblocks (16x16 pixels), whoih are divided into 4x4 blocks again. After application of a series of mathematical functions on this blocks, compression and decompres- sion is performed(Juurlink et al., 2012).
 
 \section{Experiments}
+
+\subsection{Baseline and Dataset}
+
+Our dataset consists of a movie clip, which we trimmed to 3000 frames and compressed with maximum bitrate values of (4MB/s, 2MB/s, 1MB/s and 500Kb/s). We do not use the original video as a baseline, but a video of a highest bitrate of 4MB/s to decrease the changes to the video made by the compression algorithm. In other words, due to the use of one video compression algorithm, we can ignore factors other than bitrate when analyzing the results of experiments.
+
+The video used by us contains both scenes with faces and scenes with pedestrians, moreover, ones differently rotated relative to the camera. In addition, scenes contain blurry objects associated with the rapid movement of the latter in the frame.
+
+We used ffmpeg tool to compress the video. In addition, we also used the JM reference software to check how the use of different motion estimation algorithms at different bitrates affects the accuracy of object recognition. However, it was decided to use ffmpeg as it produced better videos when compressed at the same bitrate.
+
+Constant Rate Factor (CRF) also played a significant role in the compressed video quality, making the quality constant for each of the frames. In our tests, we set CRF values to 0, 25 and 50, which covers the range of available quality setting while using a defined maximum bitrate value. To keep the stream bitrate in a certain bounds, we set maximum rate to (2MB/s, 1MB/s and 500Kb/s) and buffer size to (2MB/s, 1MB/s and 500Kb/s) accordingly.
+
+\subsection{Model}
+
+We used two different models for object detection:
+\begin{enumerate}
+    \item Histogram of oriented gradients (HOG) [Dalal and Triggs, 2005]
+    \item Detectron2 (\cite{wu2019detectron2})
+\end{enumerate}
+
+The HOG model we used is based on ageitgey face recognition. It starts from making the image black and white, calculating gradients for each of the pixels brightness change, dividing an image into 16x16 squares, and replace the squares in the image with the arrow directions that were the strongest for the gradients combined from inner pixels, and next finding the part of image that looks the most similar to a known HOG pattern (see Figure \ref{fig2}).
+
+\begin{figure}[ht] 
+        \centering \includegraphics[width=0.4\columnwidth]{hog.png}
+        \caption{\label{fig2} HOG we used finds the part of image that looks the most similar to a known HOG pattern that was extracted from a bunch of other training faces}
+\end{figure}
+
+Detectron2 model finds masks compared to HOG, which finds bounding boxes instead. The following object related algorithms are embedded in Detectron \footnote{We don't provide references to the following detection models since we are not going to discuss them in this article. However, the information about these models can be found at (\cite{wu2019detectron2})}:
+\begin{enumerate}
+    \item Mask R-CNN
+    \item RetinaNet
+    \item Faster R-CNN
+    \item RPN
+    \item Fast R-CNN
+    \item R-FCN 
+\end{enumerate}
+
+Detectron (Figure \ref{fig3}). is a very powerful model, which requires much more computing power for detecting objects (compared to HOG), and it provides much better detection results.
+
+
+\begin{figure}[ht] 
+        \centering \includegraphics[width=0.4\columnwidth]{facebook-detectron.jpg}
+        \caption{\label{fig3} Detectron recognition example. Source: Facebook}
+\end{figure}
+
+\subsection{Metrics}
 
 In order to evaluate the performance of object detection algorithms, many valuable benchmarks have been proposed in the literature. Among these are COCO (\cite{lin2015microsoft}), PASCAL VOC 2007 and 2012 (\cite{article2}). Despite the fact that they are mainly used to test object detection on single images, and not on video, nevertheless, we decided to use the second of them to test our hypothesis, since we checked manually by looking at a snippet of video frame by frame and making sure that that this method gives results that correspond to the real picture. 
 
@@ -78,9 +110,9 @@ IoU =\frac{area(B_{gt} \bigcap B_{d})}{area(B_{gt} \bigcup B_{d})}
 
 Nevertheless, if the number of objects (namely faces or pedestrians) on the video is relatively large, and including intersecting bounding boxes for the recognized faces in the ground truth images, PASCAL benchmark may work with errors, counting additional false negatives.
 
+Detectron has a built-in metric to calculate accuracy.
+
 \section{Results and Analysis}
-
-
 
 Describe all your results after presenting them. Include tabulated data set, larger tables can also be presented on the Appendix. Here's an example to insert a table -  Table~\ref{table1} is below:
 
@@ -119,39 +151,6 @@ This section should be brief, concise, but complete. Directly answer your object
 \bibliography{references.bib}
 
 \appendix
-
-\section*{Appendix: Velocity measurements}
-
-Below is an example large table; include mathematical derivations here as well.
-\begin{table}[ht]
-\begin{center}
-\caption{Every table needs a caption.}
-\label{table2} 
-\begin{tabular}{cc} 
-\hline
-\multicolumn{1}{c}{distance (m)} & \multicolumn{1}{c}{V (km s$^-1$)} \\
-\hline
-0.0044151 &   0.0030871 \\
-0.0021633 &   0.0021343 \\
-0.0003600 &   0.0018642 \\
-0.0023831 &   0.0013287 \\
-0.0044151 &   0.0030871 \\
-0.0021633 &   0.0021343 \\
-0.0003600 &   0.0018642 \\
-0.0023831 &   0.0013287 \\
-0.0044151 &   0.0030871 \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-
-See the inserted full page plot below (Figure \ref{fig2}) for reference (sample data only, past student submission).
-
-\begin{figure}[ht] 
-        \centering \includegraphics[width=.9\columnwidth]{Capture}
-        \caption{\label{fig2}Every figure MUST have a caption. Note that the figure caption is below the figure! Do not foget to include error bars on your plots.
-        }
-\end{figure}
 
 
 \end{document}
