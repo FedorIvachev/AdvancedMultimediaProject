@@ -27,7 +27,7 @@
 \begin{abstract}
 
 
-Typically, visual intelligent systems are trained and tested on high quality datasets, however, in practical video surveillance applications, video frames cannot be assumed to be of high quality due to video encoding, transmission and decoding associated with the limited bandwidth to which the cameras are connected, and the limitations of the cameras themselves, which usually write video in H.264. Video streaming is also affected by limited network bandwidth, and usually is performed with a low bitrate. Video compression algorithms are based on video quality indicators, which are designed to take into account the capabilities of the human visual system, that is, their task is to show the best picture for a person, with the minimum allowable video size. At the same time, when the video bitrate is lowered, object recognition works with less accuracy. In this article, we evaluate 3 modern neural network models for pedestrian and face detection at various levels of video compression. We show that existing detectors are susceptible to quality distortions arising from compression artifacts during video capture. We also provide research that avoids this disadvantage.
+Typically, visual intelligent systems are trained and tested on high quality datasets, however, in practical video surveillance applications, video frames cannot be assumed to be of high quality due to video encoding, transmission and decoding associated with the limited bandwidth to which the cameras are connected, and the limitations of the cameras themselves, which usually write video in H.264 (Wiegand et al., 2003). Video streaming is also affected by limited network bandwidth, and usually is performed with a low bitrate. Video compression algorithms are based on video quality indicators, which are designed to take into account the capabilities of the human visual system, that is, their task is to show the best picture for a person, with the minimum allowable video size. At the same time, when the video bitrate is lowered, object recognition works with less accuracy. In this article, we evaluate 3 modern neural network models for pedestrian and face detection at various levels of video compression. We show that existing detectors are susceptible to quality distortions arising from compression artifacts during video capture. We also provide research that avoids this disadvantage.
 \end{abstract}
 
 \section{Introduction}
@@ -39,45 +39,48 @@ Nevertheless, most of these video analysis systems are subject to serious risks:
 
 \section{Previous work}
 
+In Bagdanov et al. [2] method special frame areas are selected to be maintained at higher visual quality, while the rest was smoothed. Used as pre-processing step to H.264 encoding, it decreased bitrate, while increasing the performance of pedestrian detection compared to videos compressed only with H.264. However, videos are still encoded without using this approach.
+
+Recently,  it was also considered that image degradations affected networks trained for face recognition, lowering their accuracy (Karahan et al., 2016). H.264 compression also degrades image quality.
+
+ for video encoding, which is a lossy compression technique. H.264 exploits spatial redundancy within images and temporal redundancy in videos to achieve appealing compression ratios, making it a widely accepted standard for video transmission for a myriad of ap- plications. A video consists of images; an image is divided into slices and blocks. A block is a square part (16×16, 8×8 and 4×4) of the images. H.264 is a block based coder/decoder, meaning that a se- ries of mathematical functions are applied on indivi- dual blocks to achieve compression and decompres- sion (Juurlink et al., 2012). We study the effect of this degradation in quality on object detection algorithms.
+
+
+
+
+
+
 
 
 The \textit{Biot-Savart Law} is useful in ... [2].
 
 A \textcolor{blue}{Helmholtz coil} is a device for ... and was named after ... These coils were widely used in ... to produce \underline{uniform magnetic fields} ...
 
-The objective in this present lab is to ...
 
-
-State, derive, and describe the important equations that you will need to use to compare theory and experiment. Include diagrams as necessary to help with visualizing variables. Leave mathematical details of your derivations on the Appendix section. Below is an example to insert a numbered equation \ref{eq1} below
-
-\begin{equation} \label{eq1} % the label is used to reference the equation
-V=\frac{8\phi\Delta\pi a^{-5}}{\sqrt{3}\lambda\alpha\cdot\delta X \cdot\Sigma}+\nabla\vec{B}+\frac{\vec{E}}{\vec{v}}+\int \psi dL
-\end{equation}
-
-where $\psi$ is the distance to the Sun in units of km, $\lambda$ is something ... Always explain each variable once introduced. Do not introduce again at a later paragraph. 
-
-Example on how to insert an equation on a separate line, unnumbered:
-$$s_f=s_0+v_0t+\frac{1}{2}at^2$$
-or you can state equations or variables within the paragraph like this $v_f^2=v_i^2+2a\Delta s$ or variable $\xi$.
 
 \section{Experiments}
 
-In order to evaluate the performance of object detection algorithms, many valuable benchmarks have been proposed in the literature. Among these are COCO (\cite{lin2015microsoft}), PASCAL VOC 2007 and 2012 (\cite{article2}). Despite the fact that they are mainly used to test object detection on single images, and not on video, nevertheless, we decided to use the second of them to test our hypothesis, since we checked manually by looking at a snippet of video frame by frame and making sure that that this method gives results that correspond to the real picture. Nevertheless, if there are many more faces on the video, then this algorithm will give results that do not correspond to reality.
+In order to evaluate the performance of object detection algorithms, many valuable benchmarks have been proposed in the literature. Among these are COCO (\cite{lin2015microsoft}), PASCAL VOC 2007 and 2012 (\cite{article2}). Despite the fact that they are mainly used to test object detection on single images, and not on video, nevertheless, we decided to use the second of them to test our hypothesis, since we checked manually by looking at a snippet of video frame by frame and making sure that that this method gives results that correspond to the real picture. 
 
+The false negative rate – also called the miss rate – is the probability that a true positive will be missed by the test. It’s calculated as $\frac{FN}{FN+TP}$, where $FN$ is the number of false negatives and $TP$ is the number of true positives ($FN+TP$ being the total number of positives).
 
+In PASCAL benchmark, a match where intersection divided by the union of two rectangles considering recognized objects is higher than 0.5 (see Figure \ref{fig1}) and if that ground-truth object has not been already used (to avoid multiple detections of the same object) is considered a True Positive (\ref{eq1}). 
 
-
-Introduce all the steps and the equipment you used in the experiment. List or tabulate as necessary. Include model numbers, diagrams, schematics, all with labels. Make sure that the method is listed sufficiently such that someone else can easily replicate your experiment.
-
-Include diagrams/photos of the experimental setup (see Figure \ref{fig1}) (Note that referencing a figure comes before actually showing the figure!), or screenshots highlighting important steps of the process. Make sure it is large enough to see the whole picture; crop the picture and remove non-important spots.
+\begin{equation} \label{eq1} % the label is used to reference the equation
+IoU =\frac{area(B_{gt} \bigcap B_{d})}{area(B_{gt} \bigcup B_{d})}
+\end{equation}
 
 \begin{figure}[ht] 
-        \centering \includegraphics[width=0.9\columnwidth]{HCoil}
-        \caption{\label{fig1}Every figure MUST have a caption. Note that the figure caption is below the figure! You should also label the instruments above, say, (a) Coils, (b) DMM, etc.
+        \centering \includegraphics[width=0.4\columnwidth]{figure.png}
+        \caption{\label{fig1} IoU or Intersection over Union for detected objects.
         }
 \end{figure}
 
+Nevertheless, if the number of objects (namely faces or pedestrians) on the video is relatively large, and including intersecting bounding boxes for the recognized faces in the ground truth images, PASCAL benchmark may work with errors, counting additional false negatives.
+
 \section{Results and Analysis}
+
+
 
 Describe all your results after presenting them. Include tabulated data set, larger tables can also be presented on the Appendix. Here's an example to insert a table -  Table~\ref{table1} is below:
 
@@ -98,10 +101,13 @@ Describe all your results after presenting them. Include tabulated data set, lar
 \end{center}
 \end{table}
 
-\textbf{Use a full page to present important plotted findings, \textcolor{red}{don't be shy!}}(See Appendix for e.g.). Your plots should have axes labels with units, error bars, legend, captions, etc.
 
-You can also discuss the sources of errors in this section; include ways on how you may want to improve the experimental methods performed. 
 
+The main difference between detecting objects on videos and photos is that the movements of the objects can be used to gain extra information for their detection and classification. The very first task in video analysis is the estimation of motion or optical flow. Optical flow refers to the vector field of the apparent movement of pixels between frames. At the same time, Motion Estimation does the same task and is the first module of a video encoder. Since consecutive video frames include large amounts of same data, and differ only by moving objects, a next frame can be reconstructed from the previous one. The motion vectors used for the reconstruction can be also used for locating the object in the next frame, if an object was recognized successfully in the original one. 
+
+However, preparing datasets for Optical Flow based object detectors classifiers is a hard task, and not many of such datasets exist. One practical dataset currently in use is the KITTY dataset for self-driving cars. The approach of using Optical Flow based detectors provides better accuracy than our solution, but requires more time for creating dataset.
+
+The other disadvantage of our solution is running time, which can be decreased slightly by using Visual Object Tracking (VOT).For example, every 5 frames a detector is applied, and in the intermediate frames, the face is tracked as a small fragment through a pattern matching method. This approach is used in GOTURN (Generic Object Tracking Using Regression Networks).
 
 
 \section{Conclusion}
