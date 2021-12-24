@@ -125,7 +125,7 @@ Open-CV based HOG used for pedestrians detection provided too many false positiv
         }
 \end{figure}
 
-Face detection varied for different bitrates, with the miss rate decreasing with increasing bitrate. There were exactly 700 faces detected in the 2000 frames video. On the 500Kb/s video the miss rate was 0.81, on the 1000KB/s video the miss rate was 0.93, and on the 2000 KB/s video the miss rate was 0.97. The histograms for a lower bitrate videos changed, resulting in less number of recognized faces, becoming less similar to the model pattern (see Figure \ref{fig6}).
+Face detection varied for different bitrates, with the miss rate decreasing with increasing bitrate. There were exactly 700 faces detected in the 2000 frames video. On the 500Kb/s video the miss rate was 0.19, on the 1000KB/s video the miss rate was 0.07, and on the 2000 KB/s video the miss rate was 0.03. The histograms for a lower bitrate videos changed, resulting in less number of recognized faces, becoming less similar to the model pattern (see Figure \ref{fig6}).
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.8\columnwidth]{HOG500K200K.png}
@@ -133,7 +133,7 @@ Face detection varied for different bitrates, with the miss rate decreasing with
         }
 \end{figure}
 
-For the pedestrian detection using Detectron2, the miss rate for 2000 Kb/s was 0.91, for 1000 Kb/s - 0.83, for 500 Kb/s - 0.74. The relatively highest number of false positives was observed in the scene where the image degradation was the highest (see Figure \ref{fig7}).
+For the pedestrian detection using Detectron2, the miss rate for 2000 Kb/s was 0.09, for 1000 Kb/s - 0.17, for 500 Kb/s - 0.26. The relatively highest number of false positives was observed in the scene where the image degradation was the highest (see Figure \ref{fig7}).
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.8\columnwidth]{detectron.png}
@@ -154,8 +154,8 @@ The results for Face and Pedestrian detection performance are on Table~\ref{tabl
 \multicolumn{1}{c}{Bitrate 1000Kb/s} & 
 \multicolumn{1}{c}{Bitrate 2000Kb/s} \\
 \hline
-HOG (Face) & 0.81 & 0.93 & 0.97 \\
-Detectron2 & 0.74 & 0.83 & 0.91 \\
+HOG (Face) & 0.19 & 0.07 & 0.03 \\
+Detectron2 & 0.26 & 0.17 & 0.09 \\
 \hline
 \end{tabular}
 \end{center}
@@ -164,7 +164,7 @@ Detectron2 & 0.74 & 0.83 & 0.91 \\
 \section{Conclusion}
 
 We created a dataset from video compressed with different bitrates and showed that the accuracy of face and pedestrian detection in video depends on the bitrate of the latter.
-In the case of the Hog descriptor, the miss rate dropped from 0.97 for 2000Kb/s to 0.81 for 500Kb/s. However, the fall is not as strong as for pedestrian detection, which is primarily related to the background in the video (the tone of the clothes of the people is dark and matches the tone of the walls and shadows).
+In the case of the Hog descriptor, the miss rate increased from 0.03 for 2000Kb/s to 0.19 for 500Kb/s. However, the increase is not as strong as for pedestrian detection, which is primarily related to the background in the video (the tone of the clothes of the people is dark and matches the tone of the walls and shadows).
 
 As a result, even such a powerful neural network as Detectron2 has not detected a large number of pedestrians at a bitrate of 500Kb/s compared to 4000Kb/s. Such modern models trained on high quality image datasets make unreliable predictions when they encounter compression artifacts in the input due to their inability to generalize from their exact training sets. To create object detectors that are more robust to these degradations, it is necessary either to supplement their dataset with additional images with a reduced bitrate (although then the efficiency of Detectron2 on a high-bitrate video may decrease), or to apply additional video modifications, which we write about further.
 
