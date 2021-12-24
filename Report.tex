@@ -49,13 +49,11 @@ H.264 is a lossy compression technique, which exploits spatial redundancy within
 
 \subsection{Baseline and Dataset}
 
-Our dataset consists of a movie clip, which we trimmed to 3000 frames and compressed with maximum bitrate values of (4MB/s, 2MB/s, 1MB/s and 500Kb/s). We do not use the original video as a baseline, but a video of a highest bitrate of 4MB/s to decrease the changes to the video made by the compression algorithm. In other words, due to the use of one video compression algorithm, we can ignore factors other than bitrate when analyzing the results of experiments.
+Our dataset consists of a movie clip, which we trimmed to 2000 frames and compressed with maximum bitrate values of (4MB/s, 2MB/s, 1MB/s and 500Kb/s). We do not use the original video as a baseline, but a video of a highest bitrate of 4MB/s to decrease the changes to the video made by the compression algorithm. In other words, due to the use of one video compression algorithm, we can ignore factors other than bitrate when analyzing the results of experiments.
 
 The video used by us contains both scenes with faces and scenes with pedestrians, moreover, ones differently rotated relative to the camera. In addition, scenes contain blurry objects associated with the rapid movement of the latter in the frame.
 
-We used ffmpeg tool to compress the video. In addition, we also used the JM reference software to check how the use of different motion estimation algorithms at different bitrates affects the accuracy of object recognition. However, it was decided to use ffmpeg as it produced better videos when compressed at the same bitrate.
-
-Constant Rate Factor (CRF) also played a significant role in the compressed video quality, making the quality constant for each of the frames. In our tests, we set CRF values to 0, 25 and 50, which covers the range of available quality setting while using a defined maximum bitrate value. To keep the stream bitrate in a certain bounds, we set maximum rate to (2MB/s, 1MB/s and 500Kb/s) and buffer size to (2MB/s, 1MB/s and 500Kb/s) accordingly.
+We used ffmpeg tool to compress the video. In addition, we also used the JM reference software to check how the use of different motion estimation algorithms at different bitrates affects the accuracy of object recognition. However, it was decided to use ffmpeg as it produced better videos when compressed at the same bitrate, where we set the average bitrate for the videos compression (using b:v parameter). \footnote{Constant Rate Factor (CRF) also played a significant role in the compressed video quality, making the quality constant for each of the frames. In our tests, we set CRF values to 0, 25 and 50, which covers the range of available quality setting while using a defined maximum bitrate value. To keep the stream bitrate in a certain bounds, we set maximum rate to (2MB/s, 1MB/s and 500Kb/s) and buffer size to 4Mb/s, 2MB/s, 1MB/s and 500Kb/s. However, in the experiment, the resulted video bitrate could not be set to a contant value due to different scenes (including static and dynamic).}
 
 \subsection{Model}
 
@@ -110,28 +108,60 @@ IoU =\frac{area(B_{gt} \bigcap B_{d})}{area(B_{gt} \bigcup B_{d})}
 
 Nevertheless, if the number of objects (namely faces or pedestrians) on the video is relatively large, and including intersecting bounding boxes for the recognized faces in the ground truth images, PASCAL benchmark may work with errors, counting additional false negatives.
 
-Detectron has a built-in metric to calculate accuracy.
+Detectron has a built-in metric to calculate accuracy for the mask of an object, which is used to define if the object can be labeled as "person". We calculate the bounding box for each of the recognized masks and calculate the miss rate using PASCAL benchmark.
 
 \section{Results and Analysis}
 
-Describe all your results after presenting them. Include tabulated data set, larger tables can also be presented on the Appendix. Here's an example to insert a table -  Table~\ref{table1} is below:
+Open-CV based HOG used for pedestrians detection provided too many false positive results for the baseline video, so it was decided not to analyze its results (see Figures \ref{fig4}, \ref{fig5}). The main disadvantage of Open-CV built-in HOG pattern is that it works well only for pedestrians at full height and half-turned. Therefore, Face detection was performed with HOG, while pedestrian detection with Detectron.
+
+\begin{figure}[ht] 
+        \centering \includegraphics[width=0.4\columnwidth]{pedestrian1.png}
+        \caption{\label{fig4} Pedestrian Open-CV HOG detection
+        }
+\end{figure}
+
+\begin{figure}[ht] 
+        \centering \includegraphics[width=0.4\columnwidth]{pedestrian2.png}
+        \caption{\label{fig5} Pedestrian Open-CV HOG detection
+        }
+\end{figure}
+
+Face detection varied for different bitrates, with the miss rate decreasing with increasing bitrate. There were exactly 700 faces detected in the 2000 frames video. On the 500Kb/s video the miss rate was 0.81, on the 1000KB/s video the miss rate was 0.93, and on the 2000 KB/s video the miss rate was 0.97. The histograms for a lower bitrate videos changed, resulting in less recognized pattern of face(see Figures \ref{fig6}).
+
+\begin{figure}[ht] 
+        \centering \includegraphics[width=0.8\columnwidth]{HOG500K200K.png}
+        \caption{\label{fig6} HOG for face detection 500Kb/s vs 2000Kb/s
+        }
+\end{figure}
+
+For the pedestrian detection using Detectron2, the miss rate for 2000 Kb/s was 0.91, for 1000 Kb/s - 0.83, for 500 Kb/s - 0.74. The relatively highest number of false positives was observed in the scene where the image degradation was the highest (see Figures \ref{fig7}).
+
+\begin{figure}[ht] 
+        \centering \includegraphics[width=0.8\columnwidth]{detectron.png}
+        \caption{\label{fig7} Detectron2 person detection 500Kb/s vs 2000 Kb/s
+        }
+\end{figure}
+
+The results for Face and Pedestrian detection performance are on Table~\ref{table1}.
 
 \begin{table}[ht]
 \begin{center}
-\caption{Every table needs a caption. Note that the table caption is on top of the table! Note the consistency of precision of table values; do not forget the errors, labels, variables, and units.}
+\caption{Miss rate for face and pedestrian recognition in different bitrate videos}
 \label{table1} 
-\begin{tabular}{ccc} %change to cc for 2 columns
+\begin{tabular}{cccc} %change to cc for 2 columns
 \hline
-\multicolumn{1}{c}{Distance, $d$ (km) } & \multicolumn{1}{c}{Voltage, $V\ (\pm 0.05$ V)} & \multicolumn{1}{c}{Current, $I$\ (mA $\pm 5$\%)}\\
+\multicolumn{1}{c}{Detection Model} & 
+\multicolumn{1}{c}{Bitrate 500Kb/s} & 
+\multicolumn{1}{c}{Bitrate 1000Kb/s} & 
+\multicolumn{1}{c}{Bitrate 2000Kb/s} \\
 \hline
-1.2 $\pm$ 0.2 &  0.30 & 20 \\
-1.6 $\pm$ 0.4 &  0.21 & 30 \\
-2.5 $\pm$ 0.1 &  0.18 & 40 \\
-5.9 $\pm$ 0.2 &  0.13 & 50 \\
+HOG (Face) & 0.81 & 0.93 & 0.97 \\
+Detectron2 & 0.74 & 0.83 & 0.91 \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
+
 
 
 
@@ -141,9 +171,11 @@ However, preparing datasets for Optical Flow based object detectors classifiers 
 
 The other disadvantage of our solution is running time, which can be decreased slightly by using Visual Object Tracking (VOT).For example, every 5 frames a detector is applied, and in the intermediate frames, the face is tracked as a small fragment through a pattern matching method. This approach is used in GOTURN (Generic Object Tracking Using Regression Networks).
 
-
 \section{Conclusion}
-This section should be brief, concise, but complete. Directly answer your objectives, state your findings with errors, and conclude whether or not you were successful. Briefly explain if not successful.
+
+
+
+
 \cite{article1}
 
 
