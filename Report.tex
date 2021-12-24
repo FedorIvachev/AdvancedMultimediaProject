@@ -126,7 +126,7 @@ Open-CV based HOG used for pedestrians detection provided too many false positiv
         }
 \end{figure}
 
-Face detection varied for different bitrates, with the miss rate decreasing with increasing bitrate. There were exactly 700 faces detected in the 2000 frames video. On the 500Kb/s video the miss rate was 0.81, on the 1000KB/s video the miss rate was 0.93, and on the 2000 KB/s video the miss rate was 0.97. The histograms for a lower bitrate videos changed, resulting in less recognized pattern of face(see Figures \ref{fig6}).
+Face detection varied for different bitrates, with the miss rate decreasing with increasing bitrate. There were exactly 700 faces detected in the 2000 frames video. On the 500Kb/s video the miss rate was 0.81, on the 1000KB/s video the miss rate was 0.93, and on the 2000 KB/s video the miss rate was 0.97. The histograms for a lower bitrate videos changed, resulting in less recognized pattern of face(see Figure \ref{fig6}).
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.8\columnwidth]{HOG500K200K.png}
@@ -134,7 +134,7 @@ Face detection varied for different bitrates, with the miss rate decreasing with
         }
 \end{figure}
 
-For the pedestrian detection using Detectron2, the miss rate for 2000 Kb/s was 0.91, for 1000 Kb/s - 0.83, for 500 Kb/s - 0.74. The relatively highest number of false positives was observed in the scene where the image degradation was the highest (see Figures \ref{fig7}).
+For the pedestrian detection using Detectron2, the miss rate for 2000 Kb/s was 0.91, for 1000 Kb/s - 0.83, for 500 Kb/s - 0.74. The relatively highest number of false positives was observed in the scene where the image degradation was the highest (see Figure \ref{fig7}).
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.8\columnwidth]{detectron.png}
@@ -162,19 +162,20 @@ Detectron2 & 0.74 & 0.83 & 0.91 \\
 \end{center}
 \end{table}
 
+\section{Conclusion}
 
+We created a dataset from video compressed with different bitrates and showed that the accuracy of face and pedestrian detection in video depends on the bitrate of the latter.
+In the case of the Hog descriptor, the miss rate dropped from 0.97 for 2000kbps to 0.81 for 500kbps. However, the fall is not as strong as for pedestrian detection, which is primarily related to the background but the video in the dataset (the tone of the clothes of the people is dark and matches the tone of the walls and shadows).
 
+As a result, even such a powerful neural network as Detector2 did not detect a large number of pedestrians at a bitrate of 500kbps compared to 4000kbps.
+
+Such modern models trained on high quality image datasets make unreliable predictions when they encounter compression artifacts in the input due to their inability to generalize from their exact training sets. To create object detectors that are more robust to these degradations, it is necessary either to supplement their dataset with additional images with a reduced bitrate (although then the efficiency of Detectron2 on a high-bitrate video detector2 may decrease), or to apply additional video modifications, which we will write about later.
 
 The main difference between detecting objects on videos and photos is that the movements of the objects can be used to gain extra information for their detection and classification. The very first task in video analysis is the estimation of motion or optical flow. Optical flow refers to the vector field of the apparent movement of pixels between frames. At the same time, Motion Estimation does the same task and is the first module of a video encoder. Since consecutive video frames include large amounts of same data, and differ only by moving objects, a next frame can be reconstructed from the previous one. The motion vectors used for the reconstruction can be also used for locating the object in the next frame, if an object was recognized successfully in the original one. 
 
 However, preparing datasets for Optical Flow based object detectors classifiers is a hard task, and not many of such datasets exist. One practical dataset currently in use is the KITTY dataset for self-driving cars. The approach of using Optical Flow based detectors provides better accuracy than our solution, but requires more time for creating dataset.
 
 The other disadvantage of our solution is running time, which can be decreased slightly by using Visual Object Tracking (VOT).For example, every 5 frames a detector is applied, and in the intermediate frames, the face is tracked as a small fragment through a pattern matching method. This approach is used in GOTURN (Generic Object Tracking Using Regression Networks).
-
-\section{Conclusion}
-
-
-
 
 \cite{article1}
 
