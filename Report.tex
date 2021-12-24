@@ -20,7 +20,7 @@
 \begin{document}
 
 \title{Topics in Advanced Multimedia Technologies \\\textbf{On How  Video Compression Quality Affects Face And Pedestrian Detection Performance}}
-\author{Ivachev Fedor 2021380027, Lin Yuhong 2021380013, Your name + ID}
+\author{Ivachev Fedor 2021380027, Lin Yuhong 2021380013,\\ Kurowski Lawrence 2019280743, Wang Futang 2021380067}
 \date{December 16, 2021}
 \maketitle
 
@@ -43,17 +43,17 @@ In \cite{inproceedings} method special frame areas are selected to be maintained
 
 Recently,  it was also considered that image degradations affected networks trained for face recognition, lowering their accuracy (\cite{Karahan2016HowID}). 
 
-H.264 is a lossy compression technique, which exploits spatial redundancy within images and temporal redundancy in videos to achieve appealing compression ratios. Each image in the video is divided into luma macroblocks (16x16 pixels), which are divided into 4x4 blocks again. After application of a series of mathematical functions on this blocks, compression and decompres- sion is performed(\cite{h264}). However, for the low bitrates, the degradation of image frames is noticeable. 
+H.264 is a lossy compression technique, which exploits spatial redundancy within images and temporal redundancy in videos to achieve appealing compression ratios. Each image in the video is divided into luma macroblocks (16x16 pixels), which are divided into 4x4 blocks again. After application of a series of mathematical functions on these blocks, compression and decompression is performed(\cite{h264}). However, for the low bitrates, the degradation of image frames is noticeable. 
 
 \section{Experiments}
 
 \subsection{Baseline and Dataset}
 
-Our dataset consists of a movie clip, which we trimmed to 2000 frames and compressed with maximum bitrate values of (4MB/s, 2MB/s, 1MB/s and 500Kb/s). We do not use the original video as a baseline, but a video of a highest bitrate of 4MB/s to decrease the changes to the video made by the compression algorithm. In other words, due to the use of one video compression algorithm, we can ignore factors other than bitrate when analyzing the results of experiments.
+Our dataset consists of a movie clip, which we trimmed to 2000 frames and compressed with maximum bitrate values of (4Mb/s, 2Mb/s, 1Mb/s and 500Kb/s). We do not use the original video as a baseline, but a video of a highest bitrate of 4Mb/s to decrease the changes to the video made by the compression algorithm. In other words, due to the use of one video compression algorithm, we can ignore factors other than bitrate when analyzing the results of experiments.
 
 The video used by us contains both scenes with faces and scenes with pedestrians, moreover, ones differently rotated relative to the camera. In addition, scenes contain blurry objects associated with the rapid movement of the latter in the frame.
 
-We used ffmpeg tool to compress the video. In addition, we also used the JM reference software (\cite{JM}) to check how the use of different motion estimation algorithms at different bitrates affects the accuracy of object recognition. However, it was decided to use ffmpeg as it produced better quality videos when compressed at the same bitrate, where we set the average bitrate for the videos compression (using b:v parameter). \footnote{Constant Rate Factor (CRF) also played a significant role in the compressed video quality, making the quality constant for each of the frames. In our tests, we set CRF values to 0, 25 and 50, which covers the range of available quality setting while using a defined maximum bitrate value. To keep the stream bitrate in a certain bounds, we set maximum rate to (2MB/s, 1MB/s and 500Kb/s) and buffer size to 4Mb/s, 2MB/s, 1MB/s and 500Kb/s. However, in the experiment, the resulted video bitrate could not be set to a contant value due to different scenes (including static and dynamic).}
+We used ffmpeg tool to compress the video. In addition, we also used the JM reference software (\cite{JM}) to check how the use of different motion estimation algorithms at different bitrates affect the accuracy of object recognition. However, it was decided to use ffmpeg as it produced better quality videos when compressed at the same bitrate, where we set the average bitrate for the videos compression (using b:v parameter). \footnote{Constant Rate Factor (CRF) also played a significant role in the compressed video quality, making the quality constant for each of the frames. In our tests, we set CRF values to 0, 25 and 50, which covers the range of available quality setting while using a defined maximum bitrate value. To keep the stream bitrate in a certain bounds, we set maximum rate to (2MB/s, 1MB/s and 500Kb/s) and buffer size to 4Mb/s, 2MB/s, 1MB/s and 500Kb/s. However, in the experiment, the resulted video bitrate could not be set to a contant value due to different scenes (including static and dynamic).}
 
 \subsection{Model}
 
@@ -67,10 +67,10 @@ The HOG model we used is based on \cite{ageitgey} face recognition. It starts fr
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.4\columnwidth]{hog.png}
-        \caption{\label{fig2} HOG we used finds the part of image that looks the most similar to a known HOG pattern that was extracted from a bunch of other training faces}
+        \caption{\label{fig2} HOG we used finds the part of image that looks the most similar to a known HOG pattern that was extracted from a set of other training faces.}
 \end{figure}
 
-Detectron2 model finds masks compared to HOG, which finds bounding boxes instead. The following object related algorithms are embedded in Detectron \footnote{We don't provide references to the following detection models since we are not going to discuss them in this article. However, the information about these models can be found at (\cite{wu2019detectron2})}:
+Detectron2 model finds masks of the objects (compared to HOG, which finds bounding boxes instead). The following object related algorithms are embedded in Detectron2 \footnote{We don't provide references to the following detection models since we are not going to discuss them in this article. However, the information about these models can be found at (\cite{wu2019detectron2})}:
 \begin{enumerate}
     \item Mask R-CNN
     \item RetinaNet
@@ -80,8 +80,7 @@ Detectron2 model finds masks compared to HOG, which finds bounding boxes instead
     \item R-FCN 
 \end{enumerate}
 
-Detectron (Figure \ref{fig3}). is a very powerful model, which requires much more computing power for detecting objects (compared to HOG), and it provides much better detection results.
-
+Detectron (Figure \ref{fig3}). is a very powerful model, which requires much more computing power for detecting objects (compared to HOG), but it provides much better results for different objects detection.
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.4\columnwidth]{facebook-detectron.jpg}
@@ -90,7 +89,7 @@ Detectron (Figure \ref{fig3}). is a very powerful model, which requires much mor
 
 \subsection{Metrics}
 
-In order to evaluate the performance of object detection algorithms, many valuable benchmarks have been proposed in the literature. Among these are COCO (\cite{lin2015microsoft}), PASCAL VOC 2007 and 2012 (\cite{article2}). Despite the fact that they are mainly used to test object detection on single images, and not on video, nevertheless, we decided to use the second of them to test our hypothesis, since we checked manually by looking at a snippet of video frame by frame and making sure that that this method gives results that correspond to the real picture. 
+Valuable benchmarks have been proposed in the literature in order to evaluate the performance of object detection algorithms. Among these are COCO (\cite{lin2015microsoft}), PASCAL VOC(\cite{article2}). Despite the fact that they are mainly used to test object detection on single images, and not on videos, nevertheless, we decided to use the second of them to test our hypothesis, since we checked manually by looking at a snippet of video frame by frame and making sure that that this method gives results that correspond to the real picture. 
 
 The false negative rate – also called the miss rate – is the probability that a true positive will be missed by the test. It’s calculated as $\frac{FN}{FN+TP}$, where $FN$ is the number of false negatives and $TP$ is the number of true positives ($FN+TP$ being the total number of positives).
 
@@ -106,27 +105,27 @@ IoU =\frac{area(B_{gt} \bigcap B_{d})}{area(B_{gt} \bigcup B_{d})}
         }
 \end{figure}
 
-Nevertheless, if the number of objects (namely faces or pedestrians) on the video is relatively large, and including intersecting bounding boxes for the recognized faces in the ground truth images, PASCAL benchmark may work with errors, counting additional false negatives.
+However, if the number of objects (namely faces or pedestrians) on the video is relatively large, resulting in intersecting bounding boxes for the recognized faces in the ground truth images, PASCAL benchmark may work with errors, counting additional false negatives.
 
-Detectron has a built-in metric to calculate accuracy for the mask of an object, which is used to define if the object can be labeled as "person". We calculate the bounding box for each of the recognized masks and calculate the miss rate using PASCAL benchmark.
+Detectron2 has a built-in metric to calculate accuracy for the mask of an object, which is used to define if the object can be labeled as a "person". We calculate the bounding box for each of the recognized masks and calculate the miss rate using PASCAL benchmark.
 
 \section{Results and Analysis}
 
-Open-CV based HOG used for pedestrians detection provided too many false positive results for the baseline video, so it was decided not to analyze its results (see Figures \ref{fig4}, \ref{fig5}). The main disadvantage of Open-CV built-in HOG pattern is that it works well only for pedestrians at full height and half-turned. Therefore, Face detection was performed with HOG, while pedestrian detection with Detectron.
+Open-CV based HOG used for pedestrians detection provided too many false positives for the baseline video, so it was decided not to analyze its results (see Figures \ref{fig4}, \ref{fig5}). The main disadvantage of Open-CV built-in HOG pattern is that it works well only for pedestrians at full height and half-turned. Therefore, Face detection was performed using HOG, while pedestrian detection using Detectron2.
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.4\columnwidth]{pedestrian1.png}
-        \caption{\label{fig4} Pedestrian Open-CV HOG detection
+        \caption{\label{fig4} Pedestrian Open-CV HOG detection 1.
         }
 \end{figure}
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.4\columnwidth]{pedestrian2.png}
-        \caption{\label{fig5} Pedestrian Open-CV HOG detection
+        \caption{\label{fig5} Pedestrian Open-CV HOG detection 2.
         }
 \end{figure}
 
-Face detection varied for different bitrates, with the miss rate decreasing with increasing bitrate. There were exactly 700 faces detected in the 2000 frames video. On the 500Kb/s video the miss rate was 0.81, on the 1000KB/s video the miss rate was 0.93, and on the 2000 KB/s video the miss rate was 0.97. The histograms for a lower bitrate videos changed, resulting in less recognized pattern of face(see Figure \ref{fig6}).
+Face detection varied for different bitrates, with the miss rate decreasing with increasing bitrate. There were exactly 700 faces detected in the 2000 frames video. On the 500Kb/s video the miss rate was 0.81, on the 1000KB/s video the miss rate was 0.93, and on the 2000 KB/s video the miss rate was 0.97. The histograms for a lower bitrate videos changed, resulting in less number of recognized faces, becoming less similar to the model pattern (see Figure \ref{fig6}).
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.8\columnwidth]{HOG500K200K.png}
@@ -165,19 +164,17 @@ Detectron2 & 0.74 & 0.83 & 0.91 \\
 \section{Conclusion}
 
 We created a dataset from video compressed with different bitrates and showed that the accuracy of face and pedestrian detection in video depends on the bitrate of the latter.
-In the case of the Hog descriptor, the miss rate dropped from 0.97 for 2000kbps to 0.81 for 500kbps. However, the fall is not as strong as for pedestrian detection, which is primarily related to the background but the video in the dataset (the tone of the clothes of the people is dark and matches the tone of the walls and shadows).
+In the case of the Hog descriptor, the miss rate dropped from 0.97 for 2000Kb/s to 0.81 for 500Kb/s. However, the fall is not as strong as for pedestrian detection, which is primarily related to the background in the video (the tone of the clothes of the people is dark and matches the tone of the walls and shadows).
 
-As a result, even such a powerful neural network as Detector2 did not detect a large number of pedestrians at a bitrate of 500kbps compared to 4000kbps.
-
-Such modern models trained on high quality image datasets make unreliable predictions when they encounter compression artifacts in the input due to their inability to generalize from their exact training sets. To create object detectors that are more robust to these degradations, it is necessary either to supplement their dataset with additional images with a reduced bitrate (although then the efficiency of Detectron2 on a high-bitrate video detector2 may decrease), or to apply additional video modifications, which we will write about later.
+As a result, even such a powerful neural network as Detectron2 has not detected a large number of pedestrians at a bitrate of 500Kb/s compared to 4000Kb/s. Such modern models trained on high quality image datasets make unreliable predictions when they encounter compression artifacts in the input due to their inability to generalize from their exact training sets. To create object detectors that are more robust to these degradations, it is necessary either to supplement their dataset with additional images with a reduced bitrate (although then the efficiency of Detectron2 on a high-bitrate video may decrease), or to apply additional video modifications, which we write about further.
 
 The main difference between detecting objects on videos and photos is that the movements of the objects can be used to gain extra information for their detection and classification. The very first task in video analysis is the estimation of motion or optical flow. Optical flow refers to the vector field of the apparent movement of pixels between frames. At the same time, Motion Estimation does the same task and is the first module of a video encoder. Since consecutive video frames include large amounts of same data, and differ only by moving objects, a next frame can be reconstructed from the previous one. The motion vectors used for the reconstruction can be also used for locating the object in the next frame, if an object was recognized successfully in the original one. 
 
-However, preparing datasets for Optical Flow based object detectors classifiers is a hard task, and not many of such datasets exist. One practical dataset currently in use is the KITTY dataset for self-driving cars. The approach of using Optical Flow based detectors provides better accuracy than our solution, but requires more time for creating dataset.
+However, preparing datasets for Optical Flow based object detectors classifiers is a hard task, and not many of such datasets exist. One practical dataset currently in use is the KITTY dataset for self-driving cars (\cite{10.1177/0278364913491297}). The approach of using Optical Flow based detectors provides better accuracy than our solution, but requires more time for creating dataset.
 
-The other disadvantage of our solution is running time, which can be decreased slightly by using Visual Object Tracking (VOT).For example, every 5 frames a detector is applied, and in the intermediate frames, the face is tracked as a small fragment through a pattern matching method. This approach is used in GOTURN (Generic Object Tracking Using Regression Networks).
+The other disadvantage of our solution is object detector running time, which can be decreased slightly by using Visual Object Tracking (VOT). For example, every 5 frames a detector is applied, and in the intermediate frames, the face is tracked as a small fragment through a pattern matching method. This approach is used in GOTURN (Generic Object Tracking Using Regression Networks).
 
-\cite{article1}
+It is clear that it was necessary to test on more videos and more different bitrates to get more reliable results, as well as to test more object detection models. However, in this article we have shown that, despite being effective on detecting and classifying objects on single images or videos of good quality, models as Detectron2 still cannot detect pedestrians when the bitrate is lowered. We also suggested possible solutions to this problem.
 
 
 \bibliographystyle{plainnat}
