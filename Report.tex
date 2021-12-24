@@ -27,23 +27,23 @@
 \begin{abstract}
 
 
-Typically, visual intelligent systems are trained and tested on high quality datasets, however, in practical video surveillance applications, video frames cannot be assumed to be of high quality due to video encoding, transmission and decoding associated with the limited bandwidth to which the cameras are connected, and the limitations of the cameras themselves, which usually write video in H.264 (Wiegand et al., 2003). Video streaming is also affected by limited network bandwidth, and usually is performed with a low bitrate. Video compression algorithms are based on video quality indicators, which are designed to take into account the capabilities of the human visual system, that is, their task is to show the best picture for a person, with the minimum allowable video size. At the same time, when the video bitrate is lowered, object recognition works with less accuracy. In this article, we evaluate 3 modern neural network models for pedestrian and face detection at various levels of video compression. We show that existing detectors are susceptible to quality distortions arising from compression artifacts during video capture. We also provide research that avoids this disadvantage.
+Typically, visual intelligent systems are trained and tested on high quality datasets, however, in practical video surveillance applications, video frames cannot be assumed to be of high quality due to video encoding, transmission and decoding associated with the limited bandwidth to which the cameras are connected, and the limitations of the cameras themselves, which usually write video in H.264. Video streaming is also affected by limited network bandwidth, and usually is performed with a low bitrate. Video compression algorithms are based on video quality indicators, which are designed to take into account the capabilities of the human visual system, that is, their task is to show the best picture for a person, with the minimum allowable video size. In this article, we evaluate 3 modern neural network models for pedestrian and face detection at various levels of video compression. We show that existing detectors are susceptible to quality distortions arising from compression artifacts during video playback. We also provide research that avoids these disadvantages.
 \end{abstract}
 
 \section{Introduction}
 
 Smart surveillance cameras surround us everywhere. We unlock our phone and laptop using a face scanner built into the device, our car signals about cars that are at a critical distance to it, warning us of danger, we pay for purchases in stores by looking at the sensor. In addition, on the street, in the subway, in various government buildings, there are cameras that continuously transmit the image from them to the server for processing and detecting people in the image, monitor the behavior, activities, or other changing information for the purpose of protecting people and infrastructure. These images have been used for a very long time in algorithms for recognizing people not only by their face, but also by their gait.
 
-Nevertheless, most of these video analysis systems are subject to serious risks: with a sharp decrease in network bandwidth, less information needs to be transmitted, namely, the video bitrate is reduced. In our study, we test the hypothesis of a decrease in the accuracy of object recognition, namely, faces and pedestrians in a video with a decrease in its bitrate, and analyze the results obtained.
+Nevertheless, most of these video analysis systems are subject to serious risks: with a sharp decrease in network bandwidth, less information needs to be transmitted, namely, the video bitrate is reduced. Thus, cameras write videos in H.264 codec  (\cite{1218189}). In our study, we test the hypothesis of a decrease in the accuracy of object recognition, namely, faces and pedestrians in a video with a decrease in its bitrate, and analyze the results obtained.
 
 
 \section{Previous work}
 
-In Bagdanov et al. [2] method special frame areas are selected to be maintained at higher visual quality, while the rest was smoothed. Used as pre-processing step to H.264 encoding, it decreased bitrate, while increasing the performance of pedestrian detection compared to videos compressed only with H.264. However, videos are still encoded without using this approach.
+In \cite{inproceedings} method special frame areas are selected to be maintained at higher visual quality, while the rest was smoothed. Used as preprocessing step to H.264 encoding, it decreased bitrate, while increasing the performance of pedestrian detection compared to videos compressed only with H.264. However, videos are still encoded without using this approach since it requires additional computing power.
 
-Recently,  it was also considered that image degradations affected networks trained for face recognition, lowering their accuracy (Karahan et al., 2016). H.264 compression also degrades image quality.
+Recently,  it was also considered that image degradations affected networks trained for face recognition, lowering their accuracy (\cite{Karahan2016HowID}). 
 
-H.264 is a lossy compression technique, which exploits spatial redundancy within images and temporal redundancy in videos to achieve appealing compression ratios. Each image in the video is divided into luma macroblocks (16x16 pixels), whoih are divided into 4x4 blocks again. After application of a series of mathematical functions on this blocks, compression and decompres- sion is performed(Juurlink et al., 2012).
+H.264 is a lossy compression technique, which exploits spatial redundancy within images and temporal redundancy in videos to achieve appealing compression ratios. Each image in the video is divided into luma macroblocks (16x16 pixels), which are divided into 4x4 blocks again. After application of a series of mathematical functions on this blocks, compression and decompres- sion is performed(\cite{h264}). However, for the low bitrates, the degradation of image frames is noticeable. 
 
 \section{Experiments}
 
@@ -53,17 +53,17 @@ Our dataset consists of a movie clip, which we trimmed to 2000 frames and compre
 
 The video used by us contains both scenes with faces and scenes with pedestrians, moreover, ones differently rotated relative to the camera. In addition, scenes contain blurry objects associated with the rapid movement of the latter in the frame.
 
-We used ffmpeg tool to compress the video. In addition, we also used the JM reference software to check how the use of different motion estimation algorithms at different bitrates affects the accuracy of object recognition. However, it was decided to use ffmpeg as it produced better videos when compressed at the same bitrate, where we set the average bitrate for the videos compression (using b:v parameter). \footnote{Constant Rate Factor (CRF) also played a significant role in the compressed video quality, making the quality constant for each of the frames. In our tests, we set CRF values to 0, 25 and 50, which covers the range of available quality setting while using a defined maximum bitrate value. To keep the stream bitrate in a certain bounds, we set maximum rate to (2MB/s, 1MB/s and 500Kb/s) and buffer size to 4Mb/s, 2MB/s, 1MB/s and 500Kb/s. However, in the experiment, the resulted video bitrate could not be set to a contant value due to different scenes (including static and dynamic).}
+We used ffmpeg tool to compress the video. In addition, we also used the JM reference software (\cite{JM}) to check how the use of different motion estimation algorithms at different bitrates affects the accuracy of object recognition. However, it was decided to use ffmpeg as it produced better quality videos when compressed at the same bitrate, where we set the average bitrate for the videos compression (using b:v parameter). \footnote{Constant Rate Factor (CRF) also played a significant role in the compressed video quality, making the quality constant for each of the frames. In our tests, we set CRF values to 0, 25 and 50, which covers the range of available quality setting while using a defined maximum bitrate value. To keep the stream bitrate in a certain bounds, we set maximum rate to (2MB/s, 1MB/s and 500Kb/s) and buffer size to 4Mb/s, 2MB/s, 1MB/s and 500Kb/s. However, in the experiment, the resulted video bitrate could not be set to a contant value due to different scenes (including static and dynamic).}
 
 \subsection{Model}
 
 We used two different models for object detection:
 \begin{enumerate}
-    \item Histogram of oriented gradients (HOG) [Dalal and Triggs, 2005]
-    \item Detectron2 (\cite{wu2019detectron2})
+    \item Histogram of oriented gradients (HOG) (\cite{1467360});
+    \item Detectron2 (\cite{wu2019detectron2}).
 \end{enumerate}
 
-The HOG model we used is based on ageitgey face recognition. It starts from making the image black and white, calculating gradients for each of the pixels brightness change, dividing an image into 16x16 squares, and replace the squares in the image with the arrow directions that were the strongest for the gradients combined from inner pixels, and next finding the part of image that looks the most similar to a known HOG pattern (see Figure \ref{fig2}).
+The HOG model we used is based on \cite{ageitgey} face recognition. It starts from making the image black and white, calculating gradients for each of the pixels brightness change, dividing an image into 16x16 squares, and replace the squares in the image with the arrow directions that were the strongest for the gradients combined from inner pixels, and next finding the part of image that looks the most similar to a known HOG pattern (see Figure \ref{fig2}).
 
 \begin{figure}[ht] 
         \centering \includegraphics[width=0.4\columnwidth]{hog.png}
